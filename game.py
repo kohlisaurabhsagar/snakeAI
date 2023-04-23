@@ -3,6 +3,7 @@ import tkinter as tk
 import time as time
 import random as rand
 
+
 #Global
 UP = (-1,0)
 DOWN = (1,0)
@@ -34,7 +35,7 @@ class Game:
                      (3*self.size//4, 3*self.size//4)]
         self.player_ids = [i for i in range(self.num_snakes)]
 
-        self.board = np.zeros((self.size, self.size))
+        self.board = np.zeros([self.size, self.size])
         for i in self.player_ids:
             for tup in self.snakes[i]:
                 self.board[tup[0]][tup[1]] = i + 1
@@ -52,7 +53,7 @@ class Game:
             snake_i = self.snakes[i]
             move_i = self.players[i].get_move(self.board, snake_i)
             moves.append(move_i)
-            new_square = (snake_i[-1][0] + move_i[0], snake_i[-1][1] + move_i[i])
+            new_square = (snake_i[-1][0] + move_i[0], snake_i[-1][1] + move_i[1])
             snake_i.append(new_square)
         # update tail
         for i in self.player_ids:
@@ -65,7 +66,7 @@ class Game:
         # Check out of bounds
         for i in self.player_ids:
             head_i = self.snakes[i][-1]
-            if head_i[0] >= self.size or head_i[1] >= self.size or head_i[0] < 0 or head_i[0] < 0:
+            if head_i[0] >= self.size or head_i[1] >= self.size or head_i[0] < 0 or head_i[1] < 0:
                 self.player_ids.remove(i)
             else:
                 self.board[head_i[0]][head_i[1]] = i + 1
@@ -74,21 +75,21 @@ class Game:
             head_i = self.snakes[i][-1]
             for j in range(self.num_snakes):
                 if i == j:
-                    if head_i in self.snakes[i][:1]:
+                    if head_i in self.snakes[i][:-1]:
                         self.player_ids.remove(i)
                 else:
-                        if head_i in self.snakes[j]:
-                            self.player_ids.remove(i)
+                    if head_i in self.snakes[j]:
+                        self.player_ids.remove(i)
        
         #Spawn new food
         while len(self.food) < self.num_food:
             x = self.food_xy[self.food_index][0]
             y = self.food_xy[self.food_index][1]
             while self.board[x][y] != EMPTY:
-                self.food_index == 1
+                self.food_index += 1
                 x = self.food_xy[self.food_index][0]
                 y = self.food_xy[self.food_index][1]
-            self.food.append(x, y)
+            self.food.append((x, y))
             self.board[x][y] = FOOD
             self.food_index += i
         return moves
@@ -100,7 +101,7 @@ class Game:
             if termination:
                 for i in self.player_ids:
                     if len(self.snakes[0]) - self.turn/20 <=0:
-                        self.player_ids.remove()
+                        self.player_ids.remove(i)
                         #remove return if morer than 1 snakes
                         return-2
             if len(self.player_ids) == 0:
@@ -130,10 +131,10 @@ class Game:
                 if self.board[i][j] == EMPTY:
                     print("|_", end="")
                 elif self.board[i][j] == FOOD:
-                    print("|=", end="")
+                    print("|#", end="")
                 else:
                     print("|" + str(int(self.board[i][j])), end="")
-                print("|")
+            print("|")
 
 
 class Gui:
@@ -180,5 +181,3 @@ class Gui:
         
         self.canvas.pack()
         self.app.update()
-
-
